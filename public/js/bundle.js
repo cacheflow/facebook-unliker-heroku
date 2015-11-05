@@ -286,7 +286,7 @@
 	          )
 	        ),
 	        React.createElement(
-	          'p',
+	          'h4',
 	          null,
 	          ' As a I liked a bunch of crazy pages on Facebook. At that time it used to be called "Become a fan". I would like everything in sight and accumulated a bunch of weird liked pages. This app was created out of that problem. I am far too lazy to go back and find every page I liked then unlike it. This app simply gets all of your likes from newest to oldest and allows you to unlike them one by one. Also, if you make a mistake you can easily redo the like as well. And we do not store any of of your personal information. We just need you to login and connect your Facebook account so we can find the pages you have liked over the years. Have fun unliking stuff!'
 	        )
@@ -38680,4 +38680,4 @@
 	module.exports = exports['default'];
 
 /***/ }
-/******/ ]);
+/******/ ])
