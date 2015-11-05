@@ -288,7 +288,7 @@
 	        React.createElement(
 	          'h4',
 	          null,
-	          ' As a I liked a bunch of crazy pages on Facebook. At that time it used to be called "Become a fan". I would like everything in sight and accumulated a bunch of weird liked pages. This app was created out of that problem. I am far too lazy to go back and find every page I liked then unlike it. This app simply gets all of your likes from newest to oldest and allows you to unlike them one by one. Also, if you make a mistake you can easily redo the like as well. And we do not store any of of your personal information. We just need you to login and connect your Facebook account so we can find the pages you have liked over the years. Have fun unliking stuff!'
+	          ' As a kid I liked a bunch of crazy pages on Facebook. At that time it used to be called "Become a fan". I would like everything in sight and accumulated a bunch of weird liked pages. This app was created out of that problem. I am far too lazy to go back and find every page I liked then unlike it. This app simply gets all of your likes from newest to oldest and allows you to unlike them one by one. Also, if you make a mistake you can easily redo the like as well. And we do not store any of of your personal information. We just need you to login and connect your Facebook account so we can find the pages you have liked over the years. Have fun unliking stuff!'
 	        )
 	      );
 	    }
@@ -14860,7 +14860,7 @@
 	 *
 	 * @providesModule shallowEqual
 	 * @typechecks
-	 *
+	 * 
 	 */
 
 	'use strict';
@@ -19899,19 +19899,19 @@
 
 	/* WEBPACK VAR INJECTION */(function(process, global, setImmediate) {/* @preserve
 	 * The MIT License (MIT)
-	 *
+	 * 
 	 * Copyright (c) 2013-2015 Petka Antonov
-	 *
+	 * 
 	 * Permission is hereby granted, free of charge, to any person obtaining a copy
 	 * of this software and associated documentation files (the "Software"), to deal
 	 * in the Software without restriction, including without limitation the rights
 	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 	 * copies of the Software, and to permit persons to whom the Software is
 	 * furnished to do so, subject to the following conditions:
-	 *
+	 * 
 	 * The above copyright notice and this permission notice shall be included in
 	 * all copies or substantial portions of the Software.
-	 *
+	 * 
 	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
@@ -19919,7 +19919,7 @@
 	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 	 * THE SOFTWARE.
-	 *
+	 * 
 	 */
 	/**
 	 * bluebird build version 2.10.2
@@ -22813,30 +22813,30 @@
 	_dereq_('./each.js')(Promise, INTERNAL);
 	_dereq_('./timers.js')(Promise, INTERNAL);
 	_dereq_('./filter.js')(Promise, INTERNAL);
-
-	    util.toFastProperties(Promise);
-	    util.toFastProperties(Promise.prototype);
-	    function fillTypes(value) {
-	        var p = new Promise(INTERNAL);
-	        p._fulfillmentHandler0 = value;
-	        p._rejectionHandler0 = value;
-	        p._progressHandler0 = value;
-	        p._promise0 = value;
-	        p._receiver0 = value;
-	        p._settledValue = value;
-	    }
-	    // Complete slack tracking, opt out of field-type tracking and
-	    // stabilize map
-	    fillTypes({a: 1});
-	    fillTypes({b: 2});
-	    fillTypes({c: 3});
-	    fillTypes(1);
-	    fillTypes(function(){});
-	    fillTypes(undefined);
-	    fillTypes(false);
-	    fillTypes(new Promise(INTERNAL));
-	    CapturedTrace.setBounds(async.firstLineError, util.lastLineError);
-	    return Promise;
+	                                                         
+	    util.toFastProperties(Promise);                                          
+	    util.toFastProperties(Promise.prototype);                                
+	    function fillTypes(value) {                                              
+	        var p = new Promise(INTERNAL);                                       
+	        p._fulfillmentHandler0 = value;                                      
+	        p._rejectionHandler0 = value;                                        
+	        p._progressHandler0 = value;                                         
+	        p._promise0 = value;                                                 
+	        p._receiver0 = value;                                                
+	        p._settledValue = value;                                             
+	    }                                                                        
+	    // Complete slack tracking, opt out of field-type tracking and           
+	    // stabilize map                                                         
+	    fillTypes({a: 1});                                                       
+	    fillTypes({b: 2});                                                       
+	    fillTypes({c: 3});                                                       
+	    fillTypes(1);                                                            
+	    fillTypes(function(){});                                                 
+	    fillTypes(undefined);                                                    
+	    fillTypes(false);                                                        
+	    fillTypes(new Promise(INTERNAL));                                        
+	    CapturedTrace.setBounds(async.firstLineError, util.lastLineError);       
+	    return Promise;                                                          
 
 	};
 
@@ -24186,7 +24186,7 @@
 
 	var afterTimeout = function (promise, message) {
 	    if (!promise.isPending()) return;
-
+	    
 	    var err;
 	    if(!util.isPrimitive(message) && (message instanceof Error)) {
 	        err = message;
@@ -26575,46 +26575,53 @@
 	  },
 	  render: function render() {
 	    return React.createElement(
-	      'li',
-	      null,
+	      VelocityComponent,
+	      {
+	        enter: { animation: "fade" },
+	        leave: { animation: "fade" }
+	      },
 	      React.createElement(
-	        'div',
-	        { className: 'timeline-badge primary' },
-	        React.createElement('i', { className: 'glyphicon glyphicon-thumbs-up' })
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'timeline-panel' },
+	        'li',
+	        null,
 	        React.createElement(
 	          'div',
-	          { className: 'timeline-heading' },
-	          React.createElement(
-	            'h4',
-	            { className: 'timeline-title' },
-	            this.props.name
-	          ),
-	          React.createElement(
-	            'p',
-	            null,
-	            React.createElement(
-	              'small',
-	              { className: 'text-muted' },
-	              React.createElement('i', { className: 'glyphicon glyphicon-time' }),
-	              ' 11 hours ago via Facebook'
-	            )
-	          )
+	          { className: 'timeline-badge primary' },
+	          React.createElement('i', { className: 'glyphicon glyphicon-thumbs-up' })
 	        ),
 	        React.createElement(
 	          'div',
-	          { className: 'timeline-body' },
+	          { className: 'timeline-panel' },
 	          React.createElement(
-	            'p',
-	            null,
+	            'div',
+	            { className: 'timeline-heading' },
 	            React.createElement(
-	              'button',
-	              { className: 'btn btn-success', id: 'like', onClick: this.reLike },
-	              'Relike ',
+	              'h4',
+	              { className: 'timeline-title' },
 	              this.props.name
+	            ),
+	            React.createElement(
+	              'p',
+	              null,
+	              React.createElement(
+	                'small',
+	                { className: 'text-muted' },
+	                React.createElement('i', { className: 'glyphicon glyphicon-time' }),
+	                ' 11 hours ago via Facebook'
+	              )
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'timeline-body' },
+	            React.createElement(
+	              'p',
+	              null,
+	              React.createElement(
+	                'button',
+	                { className: 'btn btn-success', id: 'like', onClick: this.reLike },
+	                'Relike ',
+	                this.props.name
+	              )
 	            )
 	          )
 	        )
@@ -32580,7 +32587,7 @@
 	      this.childWillEnter(node, doneFn);
 	    } else {
 	      this._finishAnimation(node, this.props.enter);
-
+	      
 	      // Important to tick over so that any callbacks due to finishing the animation complete first.
 	      // isMounted check necessary to avoid exception in tests, which can mount and unmount a
 	      // component before this runs over, as the "doneFn" callback does a ref lookup rather than
@@ -32639,7 +32646,7 @@
 	        doneFn();
 	      }
 
-	      return true;
+	      return true;      
 	    } else {
 	      return false;
 	    }
@@ -32715,7 +32722,7 @@
 	    // Because Safari can synchronously repaint when CSS "display" is reset, we set styles for all
 	    // browsers before the rAF tick below that starts the animation. This way you know in all
 	    // cases that you need to support your static styles being visible on the element before
-	    // the animation begins.
+	    // the animation begins. 
 	    if (style != null) {
 	      _.each(style, function (value, key) {
 	        Velocity.hook(nodes, key, value);
@@ -34242,7 +34249,7 @@
 	function registerEffect(suffix, animation) {
 	  if (_.isObject(suffix)) {
 	    animation = suffix;
-	    suffix = '';
+	    suffix = '';    
 	  }
 
 	  if (Velocity.RegisterEffect === undefined) {
@@ -34295,35 +34302,42 @@
 	  render: function render() {
 	    var pageId = this.props.id;
 	    return React.createElement(
-	      'li',
-	      { className: 'timeline-inverted' },
+	      VelocityComponent,
+	      {
+	        enter: { animation: "fade" },
+	        leave: { animation: "fade" }
+	      },
 	      React.createElement(
-	        'div',
-	        { className: 'timeline-badge warning' },
-	        React.createElement('i', { className: 'glyphicon glyphicon-thumbs-down' })
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'timeline-panel' },
+	        'li',
+	        { className: 'timeline-inverted' },
 	        React.createElement(
 	          'div',
-	          { className: 'timeline-heading' },
-	          React.createElement(
-	            'h4',
-	            { className: 'timeline-title' },
-	            this.props.name
-	          )
+	          { className: 'timeline-badge warning' },
+	          React.createElement('i', { className: 'glyphicon glyphicon-thumbs-down' })
 	        ),
 	        React.createElement(
 	          'div',
-	          { className: 'timeline-body' },
+	          { className: 'timeline-panel' },
 	          React.createElement(
-	            'p',
-	            null,
+	            'div',
+	            { className: 'timeline-heading' },
 	            React.createElement(
-	              'button',
-	              { className: 'btn btn-primary', id: 'unlike', onClick: this.unlikeButton },
-	              'Unlike'
+	              'h4',
+	              { className: 'timeline-title' },
+	              this.props.name
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'timeline-body' },
+	            React.createElement(
+	              'p',
+	              null,
+	              React.createElement(
+	                'button',
+	                { className: 'btn btn-primary', id: 'unlike', onClick: this.unlikeButton },
+	                'Unlike'
+	              )
 	            )
 	          )
 	        )
@@ -35752,7 +35766,7 @@
 	 * nested.
 	 *
 	 *   import { Route, createRoutesFromReactChildren } from 'react-router'
-	 *
+	 *   
 	 *   const routes = createRoutesFromReactChildren(
 	 *     <Route component={App}>
 	 *       <Route path="home" component={Dashboard}/>
@@ -37136,7 +37150,7 @@
 	 * the change from prevState to nextState. We leave routes if either
 	 * 1) they are not in the next state or 2) they are in the next state
 	 * but their params have changed (i.e. /users/123 => /users/456) or
-	 * 3) they are in the next state but the query has changed
+	 * 3) they are in the next state but the query has changed 
 	 * (i.e. /search?query=foo => /search?query=bar)
 	 *
 	 * leaveRoutes are ordered starting at the leaf route of the tree
@@ -38680,4 +38694,4 @@
 	module.exports = exports['default'];
 
 /***/ }
-/******/ ])
+/******/ ]);
