@@ -101,116 +101,28 @@
 	    })(document, 'script', 'facebook-jssdk');
 	  },
 
-	  setLikes: function setLikes(likes) {
-	    this.setState({ likes: likes });
-	  },
-
-	  getFirstLikes: function getFirstLikes(apiEndpoint) {
-	    var methodContext = this;
-	    FB.api("me/likes?fields=link,name,created_time&limit=100", (function (likes) {
-	      this.setState({ likes: likes });
-	      console.log("here are your likes from state", this.state.likes);
-	    }).bind(this));
-	  },
-
-	  getAllLikes: function getAllLikes(myLikes) {
-	    return new Promise(function (resolve, reject) {
-	      FB.api(myLikes.paging.next(function (data) {
-	        console.log(data);
-	      }));
-	    });
-	  },
-
 	  checkLoginStatus: function checkLoginStatus() {
-	    return new Promise(function (resolve, rejecet) {
-	      FB.login(function (data) {
-	        console.log(data);
-	        resolve(data);
-	      }, {
-	        scope: 'publish_actions'
-	      });
-	    });
-	  },
-
-	  fetchAllLikes: function fetchAllLikes(nextApiEndpoint) {
-	    FB.api(nextApiEndpoint, (function (responseData) {
-	      var allLikes = this.state.likes;
-	      allLikes = allLikes.concat(responseData.data);
-	      this.setState({ likes: allLikes });
-	      console.log(this.state.likes);
-	      if (responseData.paging) {
-	        this.fetchAllLikes(responseData.paging.next);
-	      }
-	    }).bind(this));
-	  },
-
-	  getLikes: function getLikes() {
-	    this.checkLoginStatus().then((function (response) {
-	      return new Promise(function (resolve, reject) {
-	        FB.api("me/likes?fields=link,name,created_time&limit=100", function (response) {
-	          console.log(response);
-	          resolve(response);
+	    var methodContext = this;
+	    FB.login(function (data) {
+	      if (data.status === "connected") {
+	        FB.api("/me", function (response) {
+	          methodContext.setState({ username: response.name });
+	          methodContext.setState({ clicked: true });
 	        });
-	      }).then((function (response) {
-	        if (response.paging) {
-	          this.setStateAndFetchAllLikes(response.data, response.paging.next);
-	        } else {
-	          this.setState({ likes: response.data });
-	        }
-	      }).bind(this));
-	    }).bind(this));
-	  },
-
-	  setStateAndFetchAllLikes: function setStateAndFetchAllLikes(likesData, nextApiEndpoint) {
-	    this.setState({ likes: likesData });
-	    this.fetchAllLikes(nextApiEndpoint);
-	    this.setState({ showLoadingText: false });
+	      } else if (data.status !== "connected") {
+	        methodContext.setState({ clicked: false });
+	      }
+	    }, {
+	      scope: 'publish_actions'
+	    });
 	  },
 
 	  handleClick: function handleClick() {
-	    this.setState({ showLoadingText: true });
-	    this.getLikes();
-	    this.setState({ clicked: true });
-	  },
-
-	  unlikeOnFacebook: function unlikeOnFacebook(propsId) {},
-
-	  redoLike: function redoLike(unlikedProps) {
-	    this.setState({ unliked: update(this.state.unliked, { $splice: [[unlikedProps.arrIndex, 1]] })
-	    });
-	    var likedFromState = this.state.likes;
-	    var newLikedState = update(likedFromState, { $unshift: [{
-	        name: unlikedProps.name,
-	        id: unlikedProps.id,
-	        link: unlikedProps.link
-	      }] });
-	    this.setState({ likes: newLikedState });
-
-	    console.log("decreasing your length", this.state.unliked.length);
-	  },
-
-	  updateUnlikes: function updateUnlikes(props) {
-	    this.setState({ likes: update(this.state.likes, { $splice: [[props.arrIndex, 1]] })
-	    });
-	    var unlikedFromState = this.state.unliked;
-	    var newUnlikedState = update(unlikedFromState, { $unshift: [{
-	        name: props.name,
-	        id: props.id,
-	        link: props.link
-	      }] });
-	    this.setState({ unliked: newUnlikedState });
-	  },
-
-	  postToFacebook: function postToFacebook() {
-	    var fbMsg = this.refs.post.value;
-	    FB.login(function () {
-	      FB.api('/me/feed', 'post', { message: 'Hello, world!' });
-	    }, { scope: 'publish_actions' });
+	    this.checkLoginStatus();
 	  },
 
 	  logoutFacebook: function logoutFacebook() {
-	    this.setState({ likes: [],
-	      unliked: [],
+	    this.setState({
 	      clicked: false
 	    });
 	    this.forceUpdate();
@@ -220,28 +132,6 @@
 	  },
 
 	  checkClickedState: function checkClickedState() {
-	    var passDownLikesToChild = this.state.likes.map((function (likesResponse, index) {
-	      return React.createElement(Like, {
-	        key: likesResponse.name + index,
-	        name: likesResponse.name,
-	        link: likesResponse.link,
-	        id: likesResponse.id,
-	        arrIndex: index,
-	        updateUnlikes: this.updateUnlikes,
-	        unliked: this.state.unliked
-	      });
-	    }).bind(this));
-	    var passDownUnlikesToChild = this.state.unliked.map((function (unlike, index) {
-	      return React.createElement(Unlike, {
-	        key: index + unlike.id,
-	        name: unlike.name,
-	        id: unlike.id,
-	        link: unlike.link,
-	        arrIndex: index,
-	        redoLike: this.redoLike
-	      });
-	    }).bind(this));
-
 	    if (this.state.clicked) {
 	      return React.createElement(
 	        'div',
@@ -261,10 +151,10 @@
 	          )
 	        ),
 	        React.createElement(
-	          'ul',
-	          { className: 'timeline' },
-	          passDownUnlikesToChild,
-	          passDownLikesToChild
+	          'h1',
+	          null,
+	          'Hey you\'re logged in ',
+	          this.state.username
 	        )
 	      );
 	    } else {
@@ -288,7 +178,7 @@
 	        React.createElement(
 	          'h4',
 	          null,
-	          ' As a kid I liked a bunch of crazy pages on Facebook. At that time it used to be called "Become a fan". I would like everything in sight and accumulated a bunch of weird liked pages. This app was created out of that problem. I am far too lazy to go back and find every page I liked then unlike it. This app simply gets all of your likes from newest to oldest and allows you to unlike them one by one. Also, if you make a mistake you can easily redo the like as well. And we do not store any of of your personal information. We just need you to login and connect your Facebook account so we can find the pages you have liked over the years. Have fun unliking stuff!'
+	          ' As a I liked a bunch of crazy pages on Facebook. At that time it used to be called "Become a fan". I would like everything in sight and accumulated a bunch of weird liked pages. This app was created out of that problem. I am far too lazy to go back and find every page I liked then unlike it. This app simply gets all of your likes from newest to oldest and allows you to unlike them one by one. Also, if you make a mistake you can easily redo the like as well. And we do not store any of of your personal information. We just need you to login and connect your Facebook account so we can find the pages you have liked over the years. Have fun unliking stuff!'
 	        )
 	      );
 	    }
@@ -26575,53 +26465,46 @@
 	  },
 	  render: function render() {
 	    return React.createElement(
-	      VelocityComponent,
-	      {
-	        enter: { animation: "fade" },
-	        leave: { animation: "fade" }
-	      },
+	      'li',
+	      null,
 	      React.createElement(
-	        'li',
-	        null,
+	        'div',
+	        { className: 'timeline-badge primary' },
+	        React.createElement('i', { className: 'glyphicon glyphicon-thumbs-up' })
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'timeline-panel' },
 	        React.createElement(
 	          'div',
-	          { className: 'timeline-badge primary' },
-	          React.createElement('i', { className: 'glyphicon glyphicon-thumbs-up' })
+	          { className: 'timeline-heading' },
+	          React.createElement(
+	            'h4',
+	            { className: 'timeline-title' },
+	            this.props.name
+	          ),
+	          React.createElement(
+	            'p',
+	            null,
+	            React.createElement(
+	              'small',
+	              { className: 'text-muted' },
+	              React.createElement('i', { className: 'glyphicon glyphicon-time' }),
+	              ' 11 hours ago via Facebook'
+	            )
+	          )
 	        ),
 	        React.createElement(
 	          'div',
-	          { className: 'timeline-panel' },
+	          { className: 'timeline-body' },
 	          React.createElement(
-	            'div',
-	            { className: 'timeline-heading' },
+	            'p',
+	            null,
 	            React.createElement(
-	              'h4',
-	              { className: 'timeline-title' },
+	              'button',
+	              { className: 'btn btn-success', id: 'like', onClick: this.reLike },
+	              'Relike ',
 	              this.props.name
-	            ),
-	            React.createElement(
-	              'p',
-	              null,
-	              React.createElement(
-	                'small',
-	                { className: 'text-muted' },
-	                React.createElement('i', { className: 'glyphicon glyphicon-time' }),
-	                ' 11 hours ago via Facebook'
-	              )
-	            )
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'timeline-body' },
-	            React.createElement(
-	              'p',
-	              null,
-	              React.createElement(
-	                'button',
-	                { className: 'btn btn-success', id: 'like', onClick: this.reLike },
-	                'Relike ',
-	                this.props.name
-	              )
 	            )
 	          )
 	        )
@@ -34302,42 +34185,35 @@
 	  render: function render() {
 	    var pageId = this.props.id;
 	    return React.createElement(
-	      VelocityComponent,
-	      {
-	        enter: { animation: "fade" },
-	        leave: { animation: "fade" }
-	      },
+	      'li',
+	      { className: 'timeline-inverted' },
 	      React.createElement(
-	        'li',
-	        { className: 'timeline-inverted' },
+	        'div',
+	        { className: 'timeline-badge warning' },
+	        React.createElement('i', { className: 'glyphicon glyphicon-thumbs-down' })
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'timeline-panel' },
 	        React.createElement(
 	          'div',
-	          { className: 'timeline-badge warning' },
-	          React.createElement('i', { className: 'glyphicon glyphicon-thumbs-down' })
+	          { className: 'timeline-heading' },
+	          React.createElement(
+	            'h4',
+	            { className: 'timeline-title' },
+	            this.props.name
+	          )
 	        ),
 	        React.createElement(
 	          'div',
-	          { className: 'timeline-panel' },
+	          { className: 'timeline-body' },
 	          React.createElement(
-	            'div',
-	            { className: 'timeline-heading' },
+	            'p',
+	            null,
 	            React.createElement(
-	              'h4',
-	              { className: 'timeline-title' },
-	              this.props.name
-	            )
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'timeline-body' },
-	            React.createElement(
-	              'p',
-	              null,
-	              React.createElement(
-	                'button',
-	                { className: 'btn btn-primary', id: 'unlike', onClick: this.unlikeButton },
-	                'Unlike'
-	              )
+	              'button',
+	              { className: 'btn btn-primary', id: 'unlike', onClick: this.unlikeButton },
+	              'Unlike'
 	            )
 	          )
 	        )
