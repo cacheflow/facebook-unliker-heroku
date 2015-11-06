@@ -134,7 +134,7 @@
 
 	  postToFacebook: function postToFacebook() {
 	    var message = this.refs.message.value;
-	    FB.api('/me/feed', 'post', { message: body }, function (response) {
+	    FB.api('/me/feed', 'post', { message: message }, function (response) {
 	      if (!response || response.error) {
 	        alert('Error occured');
 	      } else {
