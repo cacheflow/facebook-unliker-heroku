@@ -133,7 +133,7 @@
 	  },
 
 	  postToFacebook: function postToFacebook() {
-	    var message = this.refs.message;
+	    var message = this.refs.message.value;
 	    console.log(message);
 	  },
 
@@ -155,6 +155,12 @@
 	            { id: 'timeline' },
 	            'Facebook Unliker: Unlike Embarrassing Stuff'
 	          )
+	        ),
+	        React.createElement(
+	          'h1',
+	          null,
+	          'Hello ',
+	          this.state.username
 	        ),
 	        React.createElement('input', { type: 'text', ref: 'message' }),
 	        React.createElement(
