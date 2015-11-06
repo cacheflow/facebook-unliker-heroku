@@ -134,7 +134,13 @@
 
 	  postToFacebook: function postToFacebook() {
 	    var message = this.refs.message.value;
-	    console.log(message);
+	    FB.api('/me/feed', 'post', { message: body }, function (response) {
+	      if (!response || response.error) {
+	        alert('Error occured');
+	      } else {
+	        alert('Your post posted and the id is' + response.id);
+	      }
+	    });
 	  },
 
 	  checkClickedState: function checkClickedState() {
