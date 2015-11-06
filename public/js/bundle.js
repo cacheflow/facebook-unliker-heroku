@@ -96,33 +96,121 @@
 	        return;
 	      }
 	      js = d.createElement(s);js.id = id;
-	      js.src = "https://connect.facebook.net/en_US/sdk.js";
+	      js.src = "http://connect.facebook.net/en_US/sdk.js";
 	      fjs.parentNode.insertBefore(js, fjs);
 	    })(document, 'script', 'facebook-jssdk');
 	  },
 
-	  checkLoginStatus: function checkLoginStatus() {
+	  setLikes: function setLikes(likes) {
+	    this.setState({ likes: likes });
+	  },
+
+	  getFirstLikes: function getFirstLikes(apiEndpoint) {
 	    var methodContext = this;
-	    FB.login(function (data) {
-	      if (data.status === "connected") {
-	        FB.api("/me", function (response) {
-	          methodContext.setState({ username: response.name });
-	          methodContext.setState({ clicked: true });
-	        });
-	      } else if (data.status !== "connected") {
-	        methodContext.setState({ clicked: false });
-	      }
-	    }, {
-	      scope: 'publish_actions'
+	    FB.api("me/likes?fields=link,name,created_time&limit=100", (function (likes) {
+	      this.setState({ likes: likes });
+	      console.log("here are your likes from state", this.state.likes);
+	    }).bind(this));
+	  },
+
+	  getAllLikes: function getAllLikes(myLikes) {
+	    return new Promise(function (resolve, reject) {
+	      FB.api(myLikes.paging.next(function (data) {
+	        console.log(data);
+	      }));
 	    });
 	  },
 
+	  checkLoginStatus: function checkLoginStatus() {
+	    return new Promise(function (resolve, rejecet) {
+	      FB.login(function (data) {
+	        console.log(data);
+	        resolve(data);
+	      }, {
+	        scope: 'publish_actions'
+	      });
+	    });
+	  },
+
+	  fetchAllLikes: function fetchAllLikes(nextApiEndpoint) {
+	    FB.api(nextApiEndpoint, (function (responseData) {
+	      var allLikes = this.state.likes;
+	      allLikes = allLikes.concat(responseData.data);
+	      this.setState({ likes: allLikes });
+	      console.log(this.state.likes);
+	      if (responseData.paging) {
+	        this.fetchAllLikes(responseData.paging.next);
+	      }
+	    }).bind(this));
+	  },
+
+	  getLikes: function getLikes() {
+	    this.checkLoginStatus().then((function (response) {
+	      return new Promise(function (resolve, reject) {
+	        FB.api("me/likes?fields=link,name,created_time&limit=100", function (response) {
+	          console.log(response);
+	          resolve(response);
+	        });
+	      }).then((function (response) {
+	        if (response.paging) {
+	          this.setStateAndFetchAllLikes(response.data, response.paging.next);
+	        } else {
+	          this.setState({ likes: response.data });
+	        }
+	      }).bind(this));
+	    }).bind(this));
+	  },
+
+	  setStateAndFetchAllLikes: function setStateAndFetchAllLikes(likesData, nextApiEndpoint) {
+	    this.setState({ likes: likesData });
+	    this.fetchAllLikes(nextApiEndpoint);
+	    this.setState({ showLoadingText: false });
+	  },
+
 	  handleClick: function handleClick() {
-	    this.checkLoginStatus();
+	    this.setState({ showLoadingText: true });
+	    this.getLikes();
+	    this.setState({ clicked: true });
+	  },
+
+	  unlikeOnFacebook: function unlikeOnFacebook(propsId) {},
+
+	  redoLike: function redoLike(unlikedProps) {
+	    this.setState({ unliked: update(this.state.unliked, { $splice: [[unlikedProps.arrIndex, 1]] })
+	    });
+	    var likedFromState = this.state.likes;
+	    var newLikedState = update(likedFromState, { $unshift: [{
+	        name: unlikedProps.name,
+	        id: unlikedProps.id,
+	        link: unlikedProps.link
+	      }] });
+	    this.setState({ likes: newLikedState });
+
+	    console.log("decreasing your length", this.state.unliked.length);
+	  },
+
+	  updateUnlikes: function updateUnlikes(props) {
+	    this.setState({ likes: update(this.state.likes, { $splice: [[props.arrIndex, 1]] })
+	    });
+	    var unlikedFromState = this.state.unliked;
+	    var newUnlikedState = update(unlikedFromState, { $unshift: [{
+	        name: props.name,
+	        id: props.id,
+	        link: props.link
+	      }] });
+	    this.setState({ unliked: newUnlikedState });
+	  },
+
+	  postToFacebook: function postToFacebook() {
+	    var fbMsg = this.refs.post.value;
+	    FB.login(function () {
+	      FB.api('/me/feed', 'post', { message: 'Hello, world!' });
+	    }, { scope: 'publish_actions' });
 	  },
 
 	  logoutFacebook: function logoutFacebook() {
-	    this.setState({
+	    this.setState({ likes: [],
+	      unliked: [],
 	      clicked: false
 	    });
 	    this.forceUpdate();
@@ -132,6 +220,28 @@
 	  },
 
 	  checkClickedState: function checkClickedState() {
+	    var passDownLikesToChild = this.state.likes.map((function (likesResponse, index) {
+	      return React.createElement(Like, {
+	        key: likesResponse.name + index,
+	        name: likesResponse.name,
+	        link: likesResponse.link,
+	        id: likesResponse.id,
+	        arrIndex: index,
+	        updateUnlikes: this.updateUnlikes,
+	        unliked: this.state.unliked
+	      });
+	    }).bind(this));
+	    var passDownUnlikesToChild = this.state.unliked.map((function (unlike, index) {
+	      return React.createElement(Unlike, {
+	        key: index + unlike.id,
+	        name: unlike.name,
+	        id: unlike.id,
+	        link: unlike.link,
+	        arrIndex: index,
+	        redoLike: this.redoLike
+	      });
+	    }).bind(this));
+
 	    if (this.state.clicked) {
 	      return React.createElement(
 	        'div',
@@ -151,10 +261,10 @@
 	          )
 	        ),
 	        React.createElement(
-	          'h1',
-	          null,
-	          'Hey you\'re logged in ',
-	          this.state.username
+	          'ul',
+	          { className: 'timeline' },
+	          passDownUnlikesToChild,
+	          passDownLikesToChild
 	        )
 	      );
 	    } else {
@@ -178,7 +288,7 @@
 	        React.createElement(
 	          'h4',
 	          null,
-	          'As a kid I liked a bunch of crazy pages on Facebook. Back when it was called "Become a fan". I would like everything in sight and accumulated a bunch of weird liked pages. This app was created out of that problem. I am too lazy to go back and find every page I liked and unlike it. This app simply gets all of your likes from newest to oldest and allows you to unlike them one by one. Also, if you make a mistake you can easily redo the like as well. And we do not store any of of your personal information. We just need you to login and connect your Facebook account so we can find the pages you have liked over the years. Have fun unliking stuff!'
+	          ' As a I liked a bunch of crazy pages on Facebook. At that time it used to be called "Become a fan". I would like everything in sight and accumulated a bunch of weird liked pages. This app was created out of that problem. I am far too lazy to go back and find every page I liked then unlike it. This app simply gets all of your likes from newest to oldest and allows you to unlike them one by one. Also, if you make a mistake you can easily redo the like as well. And we do not store any of of your personal information. We just need you to login and connect your Facebook account so we can find the pages you have liked over the years. Have fun unliking stuff!'
 	        )
 	      );
 	    }
